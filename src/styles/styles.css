@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bs-body-font-family: 'Inter', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+body, .navbar, .card {
+    background-color: #121212;
+}
+
+.nav-link {
+    color: #747474;
+}
+
+.nav-link:hover, i:hover {
+    color: #d90368;
+    transition: 0.5s all;
+}
+
+i {
+    color: #fff;
+}
+
+.card {
+    border-color: #000000;
+}
+
+.carousel-item {
+    height: 250px;
+}
+
+.carousel-image {
+    width: 100%;
+    height: auto;
+    filter: brightness(20%);
+}
+
+.carousel-caption {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 75%;
+}
+
+.carousel-caption h1 {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+}
+
+/* ScrollBar */
+::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+::-webkit-scrollbar-track {
+    background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1f1f1f;
+    border-radius: 100vw;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #d90368;
+}
+
+.form-control::placeholder {
+    color: #5e5e5e;
+}
