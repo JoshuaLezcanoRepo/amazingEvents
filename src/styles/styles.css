@@ -31,9 +31,8 @@ i {
 }
 
 .carousel-image {
-    width: 100%;
-    height: auto;
     filter: brightness(20%);
+    object-fit: cover;
 }
 
 .carousel-caption {
