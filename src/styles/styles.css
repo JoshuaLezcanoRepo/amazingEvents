@@ -5,8 +5,13 @@
     letter-spacing: -0.5px;
 }
 
-body, .navbar, .card {
+body, .card {
     background-color: #121212;
+}
+
+.navbar {
+    background-color: #121212e7;
+    backdrop-filter: blur(5px);
 }
 
 .nav-link {
@@ -23,7 +28,7 @@ i {
 }
 
 .card {
-    border-color: #000000;
+    border-color: #2e2e2e;
 }
 
 .carousel-item {
@@ -40,6 +45,11 @@ i {
     justify-content: center;
     align-items: center;
     height: 75%;
+}
+
+.card-img-top {
+    object-fit: cover;
+    height: 12.5rem;
 }
 
 .carousel-caption h1 {
@@ -68,4 +78,41 @@ i {
 
 .form-control::placeholder {
     color: #5e5e5e;
+}
+
+.card {
+    transition: 0.5s all ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 24px 36px rgba(0, 0, 0, 0.11), 0 24px 46px #d903675d;
+}
+
+.favorite {
+    margin-right: 5px;
+    margin-top: 5px;
+    background-color: #12121296;
+    color: #fff;
+}
+
+.favorite:hover {
+    background-color: #d90368;
+    color: #fff;
+}
+
+.bi-heart:hover {
+    color: #fff;
+}
+
+.favorite.like {
+    color: #d90368;
+    background-color: #000000d5;
+}
+
+.status {
+    background-color: #000000e3;
+    color: #fff;
+    font-weight: 600;
+    border-bottom-right-radius: 10px;
 }

@@ -1,7 +1,7 @@
 let contadorCards = 0;
 const events = data.events;
 const curDate = data.currentDate;
-const $base = document.getElementById('baseCard');
+const $baseUpcoming = document.getElementById('baseUpcoming');
 const $baseTotalEventos = document.getElementById('totalEventos');
 const $catContainer = document.getElementById('catContainer');
 
@@ -11,7 +11,6 @@ function generateTemplate(event) {
     <div class="col">
         <div class="card h-100">
             <i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill" id="fav"></i></a>
-            <small class="position-absolute top-0 start-0 py-2 px-3 status">${statusEvent}</small>
             <img src="${event.image}" class="card-img-top" alt="Image Card 1">
             <div class="card-body text-white">
                 <h5 class="card-title">${event.name}</h5>
@@ -20,31 +19,37 @@ function generateTemplate(event) {
             <div class="card-body d-flex justify-content-between align-items-center text-white">
                 <small>Price $${event.price}</small>
                 <div class="btn-group">
-                    <a href="./src/pages/details.html" role="button" class="btn btn-outline-light">Details</a>
+                    <a href="../pages/details.html" role="button" class="btn btn-outline-light">Details</a>
                 </div>
             </div>
         </div>
     </div>`
 }
 
-// Función para crear las cards, con parametro (array con los eventos y la base donde se colocaran las cards)
-let statusEvent = "";
-function createCards(events, $base) {
-    let templateCards = "";
+// Función para filtrar cada evento por la fecha y añadirlo a un array vacio
+function filterUpcomingEvents(events, curDate) {
+    const upcomingEvents = [];
     for (let event of events) {
         if (Date.parse(curDate) < Date.parse(`${event.date}`)) {
-            statusEvent = "Upcoming Event";
-        } else {
-            statusEvent = "Past Event";
+            upcomingEvents.push(event);
         }
-        templateCards += generateTemplate(event);
-        contadorCards++;
     }
-    $base.innerHTML = templateCards;
+    return upcomingEvents;
 }
 
-createCards(events, $base);
-$baseTotalEventos.innerHTML = `Total Events: ${contadorCards}`;
+// Función para crear las cards, con parametro (array con los eventos filtrados y la base donde se colocaran las cards)
+function createCards(upcomingEvents, $baseUpcoming) {
+    let templateCardsUpcoming = "";
+    for (let event of upcomingEvents) {
+        templateCardsUpcoming += generateTemplate(event);
+        contadorCards++;
+    }
+    $baseUpcoming.innerHTML = templateCardsUpcoming;
+}
+
+const createupcomingEvents = filterUpcomingEvents(events, curDate);
+createCards(createupcomingEvents, $baseUpcoming);
+$baseTotalEventos.innerHTML = `Total Upcoming Events: ${contadorCards}`;
 
 // Función para marcar eventos favoritos
 const favButtons = document.querySelectorAll('.favorite');
@@ -68,7 +73,7 @@ function createCats(array) {
 
 // Filtro para eliminar categorias repetidas
 let cat = [];
-const categories = events.filter(element => {
+const categories = createupcomingEvents.filter(element => {
     const isDuplicate = cat.includes(element.category);
     if (!isDuplicate) {
         cat.push(element.category);
