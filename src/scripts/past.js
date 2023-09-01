@@ -10,7 +10,7 @@ function generateTemplate(event) {
     return `
     <div class="col">
         <div class="card h-100">
-            <i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill" id="fav"></i></a>
+            <i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill"></i>
             <img src="${event.image}" class="card-img-top" alt="Image Card 1">
             <div class="card-body text-white">
                 <h5 class="card-title">${event.name}</h5>
