@@ -1,12 +1,12 @@
-# Amazing Events
-### Tarea N°1
+# Amazing Events / Sprint 2
+### Tarea N°2
 
 En esta tarea, se realizó lo siguiente:
->- Se creo una Página llamada "Amazing Events" con distintas secciones.
->- Para el diseño general de la Página, se utilizó Bootstrap.
->- Página para iniciar el 2do Módulo de MIND-HUB (Javascript).
+>- Una sección en el nav que me muestre en número la cantidad de cards impresas
+>- Imprimir dinámicamente ( como las cards ) los checkbox de categorías
+>- Colocarle una animación a las cards cuando uno pasa ppor arriba
+>- Colocarle a cada card un iconito para converitir en favorito, un corazón que al hacer click se pinte
+>- Que cada card diga en algún lado si el evento ya ocurrió o no
 
-![screencapture-127-0-0-1-5500-index-html-2023-08-24-23_09_54](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/d6a1d036-325a-45b4-9540-43546caf8cab)
-![screencapture-127-0-0-1-5500-src-pages-contact-html-2023-08-24-16_01_49](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/41219de3-6a4f-40ad-a88a-f9bb5f5d3435)
-![screencapture-127-0-0-1-5500-src-pages-stats-html-2023-08-24-16_02_16](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/fb3df066-2a4a-42da-8426-4c3561b5c7fb)
-![screencapture-127-0-0-1-5500-src-pages-details-html-2023-08-24-23_10_22](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/479f369f-c211-4031-8d22-f9af5f235dfd)
+![screencapture-127-0-0-1-5500-index-html-2023-08-31-15_47_20](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/954d98c8-71f6-4ee5-8883-cddd5a7602bd)
+![screencapture-127-0-0-1-5500-src-pages-pastEvents-html-2023-08-31-15_49_27](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/8ad203c4-8d1e-400d-b048-8bc3e7fc9fad)
