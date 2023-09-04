@@ -4,6 +4,7 @@ const curDate = data.currentDate;
 const $basePast = document.getElementById('basePast');
 const $baseTotalEventos = document.getElementById('totalEventos');
 const $catContainer = document.getElementById('catContainer');
+const $inputSearch = document.getElementById('inputSearch');
 
 // Función para crear el template de las cards
 function generateTemplate(event) {
@@ -38,13 +39,13 @@ function filterPastEvents(events, curDate) {
 }
 
 // Función para crear las cards, con parametro (array con los eventos filtrados y la base donde se colocaran las cards)
-function createCards(pastEvents, $basePast) {
+function createCards(pastEvents, basePast) {
     let templateCardsPast = "";
-    for (let event of pastEvents) {
+    pastEvents.forEach( event => {
         templateCardsPast += generateTemplate(event);
         contadorCards++;
-    }
-    $basePast.innerHTML = templateCardsPast;
+    });
+    basePast.innerHTML = templateCardsPast;
 }
 
 const createPastEvents = filterPastEvents(events, curDate);
@@ -59,36 +60,42 @@ favButtons.forEach(function (button) {
     });
 });
 
-// Función para crear categorias filtradas
-let option = 0;
-function createCats(array) {
-    let templateCats = "";
-    for (let i = 0; i < array.length; i++) {
-        const nameCat = array[i];
-        option++;
-        templateCats += generateTemplateCat(nameCat);
-    }
-    $catContainer.innerHTML = templateCats;
-}
-
-// Filtro para eliminar categorias repetidas
-let cat = [];
-const categories = createPastEvents.filter(element => {
-    const isDuplicate = cat.includes(element.category);
-    if (!isDuplicate) {
-        cat.push(element.category);
-        return true;
-    }
-    return false;
-});
+// Filtrado de Categorias
+const allCategoriesPast = [...new Set(createPastEvents.map(event => event.category))];
 
 // Función para crear el template de las categorias
 function generateTemplateCat(event) {
     return `
     <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="${option}" value="${option}">
-        <label class="form-check-label" for="${option}">${event}</label>
+        <input class="form-check-input" type="checkbox" id="${event}" value="${event}">
+        <label class="form-check-label" for="${event}">${event}</label>
     </div>`
 }
 
-createCats(cat);
+// Función para crear categorias filtradas
+function createCats(events, base) {
+    let templateCats = "";
+    events.forEach(nameCat => {
+        templateCats += generateTemplateCat(nameCat);
+    });
+    base.innerHTML = templateCats;
+}
+
+createCats(allCategoriesPast, $catContainer);
+
+// Agregamos el escuchador de eventos y buscamos el array de chequeados
+$catContainer.addEventListener("change", (e) => {
+    let array = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(check => check.value);
+    let eventsFiltered = createPastEvents.filter(event => array.includes(event.category));
+    if (eventsFiltered.length === 0) {
+        createCards(createPastEvents, $basePast);
+    } else {
+        createCards(eventsFiltered, $basePast);
+    }
+});
+
+/* Get Search and Function */
+$inputSearch.addEventListener('input', function() {
+    const searchValue = $inputSearch.value;
+    console.log('Texto:', searchValue);
+});

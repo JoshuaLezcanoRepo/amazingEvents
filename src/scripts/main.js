@@ -1,9 +1,11 @@
 let contadorCards = 0;
+let statusEvent = "";
 const events = data.events;
 const curDate = data.currentDate;
 const $base = document.getElementById('baseCard');
 const $baseTotalEventos = document.getElementById('totalEventos');
 const $catContainer = document.getElementById('catContainer');
+const $inputSearch = document.getElementById('inputSearch');
 
 // Función para crear el template de las cards
 function generateTemplate(event) {
@@ -28,10 +30,9 @@ function generateTemplate(event) {
 }
 
 // Función para crear las cards, con parametro (array con los eventos y la base donde se colocaran las cards)
-let statusEvent = "";
-function createCards(events, $base) {
+function createCards(events, base) {
     let templateCards = "";
-    for (let event of events) {
+    events.forEach(event => {
         if (Date.parse(curDate) < Date.parse(`${event.date}`)) {
             statusEvent = "Upcoming Event";
         } else {
@@ -39,8 +40,8 @@ function createCards(events, $base) {
         }
         templateCards += generateTemplate(event);
         contadorCards++;
-    }
-    $base.innerHTML = templateCards;
+    })
+    base.innerHTML = templateCards;
 }
 
 createCards(events, $base);
@@ -54,36 +55,52 @@ favButtons.forEach(function (button) {
     });
 });
 
-// Función para crear categorias filtradas
-let option = 0;
-function createCats(array) {
-    let templateCats = "";
-    for (let i = 0; i < array.length; i++) {
-        const nameCat = array[i];
-        option++;
-        templateCats += generateTemplateCat(nameCat);
-    }
-    $catContainer.innerHTML = templateCats;
-}
-
-// Filtro para eliminar categorias repetidas
-let cat = [];
-const categories = events.filter(element => {
-    const isDuplicate = cat.includes(element.category);
-    if (!isDuplicate) {
-        cat.push(element.category);
-        return true;
-    }
-    return false;
-});
+// Filtrado de Categorias
+const allCategories = [...new Set(events.map(event => event.category))];
 
 // Función para crear el template de las categorias
 function generateTemplateCat(event) {
     return `
     <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="${option}" value="${option}">
-        <label class="form-check-label" for="${option}">${event}</label>
+        <input class="form-check-input" type="checkbox" id="${event}" value="${event}">
+        <label class="form-check-label" for="${event}">${event}</label>
     </div>`
 }
 
-createCats(cat);
+function createCats(events, base){
+    let templateCats = "";
+    events.forEach(cat => {
+        templateCats += generateTemplateCat(cat)
+    });
+    base.innerHTML = templateCats;
+}
+
+createCats(allCategories, $catContainer);
+
+// Agregamos el escuchador de eventos y buscamos el array de chequeados
+$catContainer.addEventListener("change", (e) => {
+    let array = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(check => check.value);
+    let eventsFiltered = events.filter(event => array.includes(event.category));
+    if (eventsFiltered.length === 0) {
+        createCards(events, $base);
+    } else {
+        createCards(eventsFiltered, $base);
+    }
+});
+
+/* Búsqueda */
+$inputSearch.addEventListener('input', function() {
+    const searchValue = $inputSearch.value.toLowerCase();
+    let eventsFiltered = events.filter(event => {
+        // Filtrar eventos por título
+        const eventName = event.name.toLowerCase();
+        return eventName.includes(searchValue);
+    });
+    
+    // Mostrar las cartas
+    if (eventsFiltered.length === 0) {
+        createCards(events, $base);
+    } else {
+        createCards(eventsFiltered, $base);
+    }
+});
