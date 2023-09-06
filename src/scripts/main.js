@@ -6,6 +6,8 @@ const $base = document.getElementById('baseCard');
 const $baseTotalEventos = document.getElementById('totalEventos');
 const $catContainer = document.getElementById('catContainer');
 const $inputSearch = document.getElementById('inputSearch');
+const $inputSearchButton = document.getElementById('inputSearchButton');
+const $result = document.getElementById('result');
 
 // Función para crear el template de las cards
 function generateTemplate(event) {
@@ -22,7 +24,7 @@ function generateTemplate(event) {
             <div class="card-body d-flex justify-content-between align-items-center text-white">
                 <small>Price $${event.price}</small>
                 <div class="btn-group">
-                    <a href="./src/pages/details.html" role="button" class="btn btn-outline-light">Details</a>
+                    <a href="./src/pages/details.html?id=${event._id}" role="button" class="btn btn-outline-light">Details</a>
                 </div>
             </div>
         </div>
@@ -46,6 +48,7 @@ function createCards(events, base) {
 
 createCards(events, $base);
 $baseTotalEventos.innerHTML = `Total Events: ${contadorCards}`;
+const contadorTotalEventos = `Total Events: ${contadorCards}`;
 
 // Función para marcar eventos favoritos
 const favButtons = document.querySelectorAll('.favorite');
@@ -77,30 +80,47 @@ function createCats(events, base){
 
 createCats(allCategories, $catContainer);
 
-// Agregamos el escuchador de eventos y buscamos el array de chequeados
-$catContainer.addEventListener("change", (e) => {
+function filterResults() {
+    let searchValue = $inputSearch.value.toLowerCase();
     let array = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(check => check.value);
-    let eventsFiltered = events.filter(event => array.includes(event.category));
-    if (eventsFiltered.length === 0) {
-        createCards(events, $base);
+    let eventsFiltered;
+    if (array.length === 0) {
+        eventsFiltered = events.filter(event => {
+            const eventName = event.name.toLowerCase();
+            return eventName.includes(searchValue);
+        });
     } else {
+        eventsFiltered = events.filter(event => {
+            const eventName = event.name.toLowerCase();
+            return eventName.includes(searchValue) && array.includes(event.category);
+        });
+    }
+
+    if (eventsFiltered.length === 0) {
+        $result.innerHTML = '¡Oops! Parece que no encontramos resultados. ¿Puedes intentarlo de nuevo?';
+        $base.innerHTML = '';
+        $baseTotalEventos.innerHTML = '';
+    } else {
+        $result.innerHTML = '';
+        $baseTotalEventos.innerHTML = `${contadorTotalEventos}`;
         createCards(eventsFiltered, $base);
     }
-});
+}
 
-/* Búsqueda */
-$inputSearch.addEventListener('input', function() {
-    const searchValue = $inputSearch.value.toLowerCase();
-    let eventsFiltered = events.filter(event => {
-        // Filtrar eventos por título
-        const eventName = event.name.toLowerCase();
-        return eventName.includes(searchValue);
-    });
-    
-    // Mostrar las cartas
-    if (eventsFiltered.length === 0) {
-        createCards(events, $base);
-    } else {
-        createCards(eventsFiltered, $base);
+$inputSearch.addEventListener('input', filterResults);
+$catContainer.addEventListener('change', filterResults);
+
+// Funcion para prevenir el "refresh"
+function preventRefresh(event) {
+    event.preventDefault();
+}
+
+// Evento que escucha el "click" del botón search
+$inputSearchButton.addEventListener('click', preventRefresh);
+
+// Evento para escuchar el "Enter"
+$inputSearch.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        preventRefresh(event);
     }
 });

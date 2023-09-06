@@ -14,7 +14,7 @@
 
 <body class="d-flex flex-column min-vh-100">
     <!-- NavBar -->
-    <nav class="navbar navbar-dark navbar-expand-lg px-4">
+    <nav class="navbar navbar-dark navbar-expand-lg fixed-top px-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="../../index.html"><img src="../images/amazing_brand.png" alt="Amazing Events Brand" width="150"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,20 +45,9 @@
     <main>
         <!-- Card with Data -->
         <div class="container-fluid p-5 align-content-center justify-content-center my-5">
-            <div class="card border-2 border-dark bg-dark text-white">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="../images/cinema.jpg" class="img-fluid rounded-start" alt="Card Image Element">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">Title</h5>
-                            <p class="card-text">Event data...</p>
-                            <p class="card-text">Event data...</p>
-                            <p class="card-text">Event data...</p>
-                            <p class="card-text">Event data...</p>
-                        </div>
-                    </div>
+            <div class="card text-white">
+                <div id="baseCard" class="row g-0">
+                    
                 </div>
             </div>
         </div>
@@ -91,6 +80,6 @@
     <!-- Script -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script src="../scripts/data.js"></script>
-    <script src="../scripts/main.js"></script>
+    <script src="../scripts/details.js"></script>
 </body>
 </html>
