@@ -1,12 +1,15 @@
-# Amazing Events
-### Tarea N°1
+# Amazing Events / Sprint 3
+### Tarea N°3
 
 En esta tarea, se realizó lo siguiente:
->- Se creo una Página llamada "Amazing Events" con distintas secciones.
->- Para el diseño general de la Página, se utilizó Bootstrap.
->- Página para iniciar el 2do Módulo de MIND-HUB (Javascript).
+>- Se añadio URL Search Params.
+>- Que el carrusel muestre 3 imágenes aleatorias cada vez que se recarga la página.
+>- Que la card de details tenga un ícono de favorito que cambie al hacer click.
+>- Al hacer click en el ícono de favoritos que se guarden ese evento en un array y que éste se pueda ver por consola.
 
-![screencapture-127-0-0-1-5500-index-html-2023-08-24-23_09_54](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/d6a1d036-325a-45b4-9540-43546caf8cab)
-![screencapture-127-0-0-1-5500-src-pages-contact-html-2023-08-24-16_01_49](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/41219de3-6a4f-40ad-a88a-f9bb5f5d3435)
-![screencapture-127-0-0-1-5500-src-pages-stats-html-2023-08-24-16_02_16](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/fb3df066-2a4a-42da-8426-4c3561b5c7fb)
-![screencapture-127-0-0-1-5500-src-pages-details-html-2023-08-24-23_10_22](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/479f369f-c211-4031-8d22-f9af5f235dfd)
+![screencapture-localhost-5500-2023-09-08-12_59_18](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/eda367f2-6b5b-4d08-809b-f26cedf2c016)
+![image](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/e06c1f8f-d59e-4877-aae8-b11718c07de1)
+![screencapture-localhost-5500-index-html-2023-09-08-13_04_51 (1)](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/d4cc76a5-a317-4006-a418-9074d687ba92)
+![screencapture-localhost-5500-src-pages-details-html-2023-09-08-13_05_23](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/660f859c-a96c-4870-adf7-b537f208544e)
+![screencapture-localhost-5500-src-pages-details-html-2023-09-08-13_05_48](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/27bb1063-b5f6-4c2a-ae13-10b3542c033a)
+![image](https://github.com/JoshuaLezcanoRepo/amazingEvents/assets/96133436/19bcf5ee-1795-4b6b-ad6b-c615ea11d4d9)
