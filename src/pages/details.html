@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -14,7 +14,7 @@
 
 <body class="d-flex flex-column min-vh-100">
     <!-- NavBar -->
-    <nav class="navbar navbar-dark navbar-expand-lg fixed-top px-4">
+    <nav class="navbar navbar-expand-lg fixed-top px-4">
         <div class="container-fluid">
             <a class="navbar-brand" href="../../index.html"><img src="../images/amazing_brand.png" alt="Amazing Events Brand" width="150"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="./stats.html">Stats</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#offcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                        aria-controls="offcanvasRight">My Favorites</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -45,17 +49,43 @@
     <main>
         <!-- Card with Data -->
         <div class="container-fluid p-5 align-content-center justify-content-center my-5">
-            <div class="card text-white">
+            <div class="card">
                 <div id="baseCard" class="row g-0">
                     
                 </div>
             </div>
         </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header text-black">
+                    <img src="../images/amazing_brand.png" class="rounded me-2" alt="Logo Amazing Events" width="100">
+                    <strong class="me-auto">Favorites</strong>
+                    <small>Right Now</small>
+                    <button type="button" class="btn-close text-bg-light" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body text-black" id="messageToast">
+                </div>
+            </div>
+        </div>
+                <!-- Toast -->
+                <div class="offcanvas offcanvas-end " tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasRightLabel">My Favorites ⚡️</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="list-group" id="baseFavorites">
+                        </div>
+                    </div>
+                    <div id="btnBody" class="d-grid">
+                    </div>
+                </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer mt-auto">
-        <div class="d-flex flex-wrap justify-content-between align-items-center px-5 py-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center px-5 py-4">
             <ul class="nav col-md-4 justify-content-start list-unstyled d-flex fs-4">
                 <li>
                     <a href="https://www.whatsapp.com/">
@@ -73,7 +103,7 @@
                     </a>
                 </li>
             </ul>
-            <span class="mb-3 mb-md-0 text-white">COHORT</span>
+            <span class="mb-md-0 fw-semibold">Argentina Programa - DW 14</span>
         </div>
     </footer>
 

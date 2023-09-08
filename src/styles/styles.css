@@ -10,8 +10,8 @@ body, .card {
 }
 
 .navbar {
-    background-color: #121212e7;
-    backdrop-filter: blur(5px);
+    background-color: #121212d5;
+    backdrop-filter: blur(10px);
 }
 
 .nav-link {
@@ -32,7 +32,7 @@ i {
 }
 
 .carousel-item {
-    height: 250px;
+    height: 300px;
 }
 
 .carousel-image {
@@ -44,7 +44,7 @@ i {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 75%;
+    height: 85%;
 }
 
 .card-img-top {
@@ -101,9 +101,16 @@ i {
     color: #fff;
 }
 
-.like {
+.like, .likeDetail {
     color: #d90368;
+}
+
+.like {
     background-color: #000000d5;
+}
+
+.likeDetail {
+    background-color: #ffffff;
 }
 
 .status {
@@ -111,4 +118,14 @@ i {
     color: #fff;
     font-weight: 600;
     border-bottom-right-radius: 10px;
+}
+
+.toast, .toast-header, .toast-body {
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
 }

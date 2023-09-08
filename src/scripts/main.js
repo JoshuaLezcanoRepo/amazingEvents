@@ -8,21 +8,25 @@ const $catContainer = document.getElementById('catContainer');
 const $inputSearch = document.getElementById('inputSearch');
 const $inputSearchButton = document.getElementById('inputSearchButton');
 const $result = document.getElementById('result');
+const toastLiveExample = document.getElementById('liveToast');
+const $messageToast = document.getElementById('messageToast');
+const $baseFavorites = document.getElementById('baseFavorites');
+const $btnBody = document.getElementById('btnBody');
 
 // Función para crear el template de las cards
 function generateTemplate(event) {
     return `
     <div class="col">
         <div class="card h-100">
-            <i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill"></i>
+            <div id="containerBtn"><i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill"></i></div>
             <small class="position-absolute top-0 start-0 py-2 px-3 status">${statusEvent}</small>
             <img src="${event.image}" class="card-img-top" alt="Image Card 1">
             <div class="card-body text-white">
-                <h5 class="card-title">${event.name}</h5>
+                <h5 class="card-title fw-semibold">${event.name}</h5>
                 <p class="card-text">${event.description}</p>
             </div>
             <div class="card-body d-flex justify-content-between align-items-center text-white">
-                <small>Price $${event.price}</small>
+                <small>Price $${event.price} USD</small>
                 <div class="btn-group">
                     <a href="./src/pages/details.html?id=${event._id}" role="button" class="btn btn-outline-light">Details</a>
                 </div>
@@ -51,15 +55,20 @@ $baseTotalEventos.innerHTML = `Total Events: ${contadorCards}`;
 const contadorTotalEventos = `Total Events: ${contadorCards}`;
 
 // Función para marcar eventos favoritos
-const favButtons = document.querySelectorAll('.favorite');
-favButtons.forEach(function (button) {
-    button.addEventListener('click', function () {
-        this.classList.toggle('like');
+function addFavoriteButtonListeners() {
+    const favButtons = document.querySelectorAll('.favorite');
+    favButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            this.classList.toggle('like');
+        });
     });
-});
+}
+
+addFavoriteButtonListeners();
 
 // Filtrado de Categorias
 const allCategories = [...new Set(events.map(event => event.category))];
+
 
 // Función para crear el template de las categorias
 function generateTemplateCat(event) {
@@ -97,7 +106,7 @@ function filterResults() {
     }
 
     if (eventsFiltered.length === 0) {
-        $result.innerHTML = '¡Oops! Parece que no encontramos resultados. ¿Puedes intentarlo de nuevo?';
+        $result.innerHTML = "🤔 ¡Oops! It seems we didn't find any results. Can you try again?";
         $base.innerHTML = '';
         $baseTotalEventos.innerHTML = '';
     } else {
@@ -105,6 +114,7 @@ function filterResults() {
         $baseTotalEventos.innerHTML = `${contadorTotalEventos}`;
         createCards(eventsFiltered, $base);
     }
+    addFavoriteButtonListeners();
 }
 
 $inputSearch.addEventListener('input', filterResults);
@@ -124,3 +134,70 @@ $inputSearch.addEventListener('keydown', function(event) {
         preventRefresh(event);
     }
 });
+
+/* Images */
+const allImages = [...new Set(events.map(event => event.image))];
+function getRandomImages() {
+    let randomImages = [];
+    let backupImages = allImages.slice();
+    for (let i = 0; i < 3; i++) {
+        let randomIndex = Math.floor(Math.random() * backupImages.length);
+        let randomImage = backupImages.splice(randomIndex, 1)[0];
+        randomImages.push(randomImage);
+    }
+    return randomImages;
+}
+
+function refreshCarousel() {
+    let randomImages = getRandomImages();
+    document.getElementById("image1").src = randomImages[0];
+    document.getElementById("image2").src = randomImages[1];
+    document.getElementById("image3").src = randomImages[2];
+}
+
+let arrayFav = [];
+function checkFavorite() {
+    const storedArrayFav = localStorage.getItem('arrayFav');
+    if (storedArrayFav) {
+        arrayFav = JSON.parse(storedArrayFav);
+    }
+}
+
+checkFavorite();
+
+function generateTemplateFav(favoriteEvents) {
+    return `
+    <a href="./src/pages/details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+        <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div>
+                <h6 class="mb-0">${favoriteEvents.name}</h6>
+                <p class="pt-3 mb-0 opacity-75">${favoriteEvents.description}</p>
+                <button type="button" class="btn btn-danger rounded-1 btn-sm">Remove Event</button>
+            </div>
+            <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>            
+        </div>
+    </a>`
+}
+
+function createCardFav(event, base) {
+    let templateCardsFav = '';
+    if (event.length === 0) {
+        base.innerHTML = "You don't have any favorite events";
+        $btnBody.innerHTML = '';
+    } else {
+        event.forEach(event => {
+            templateCardsFav += generateTemplateFav(event);
+        })
+        base.innerHTML = templateCardsFav;
+        $btnBody.innerHTML = '';
+    }
+}
+
+createCardFav(arrayFav, $baseFavorites);
+
+function deleteFavorites() {
+    localStorage.clear('arrayFav');
+    arrayFav = [];
+    createCardFav(arrayFav, $baseFavorites);
+}
