@@ -173,7 +173,6 @@ function generateTemplateFav(favoriteEvents) {
             <div>
                 <h6 class="mb-0">${favoriteEvents.name}</h6>
                 <p class="pt-3 mb-0 opacity-75">${favoriteEvents.description}</p>
-                <button type="button" class="btn btn-danger rounded-1 btn-sm">Remove Event</button>
             </div>
             <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>            
         </div>
@@ -190,7 +189,7 @@ function createCardFav(event, base) {
             templateCardsFav += generateTemplateFav(event);
         })
         base.innerHTML = templateCardsFav;
-        $btnBody.innerHTML = '';
+        $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
     }
 }
 

@@ -36,7 +36,7 @@ function createCardFav(event, base) {
             templateCardsFav += generateTemplateFav(event);
         })
         base.innerHTML = templateCardsFav;
-        $btnBody.innerHTML = '';
+        $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
     }
 }
 
