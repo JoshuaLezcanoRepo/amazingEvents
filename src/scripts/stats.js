@@ -1,3 +1,50 @@
+const events = data.events;
+const curDate = data.currentDate;
+const $tdEventStatisticsBase = document.getElementById('eventStatistics');
+console.log($tdEventStatisticsBase);
+
+
+$tdEventStatisticsBase.innerHTML = `<td>Metallica</td><td>Metallica</td><td>Metallica</td>`
+
+
+const objetoMayorAsistencia = events.reduce((objetoMayor, objetoActual) => {
+    if (objetoActual.porcentaje > objetoMayor.porcentaje) {
+      return objetoActual;
+    } else {
+      return objetoMayor;
+    }
+  });
+  
+  console.log(objetoMayorAsistencia);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let arrayFav = [];
 function checkFavorite() {
     const storedArrayFav = localStorage.getItem('arrayFav');

@@ -1,29 +1,46 @@
 const queryString = location.search;
 const params = new URLSearchParams(queryString);
-const events = data.events;
-const curDate = data.currentDate;
+// const events = data.events;
+// const curDate = data.currentDate;
 const id = params.get('id');
 const toastLiveExample = document.getElementById('liveToast');
 const $messageToast = document.getElementById('messageToast');
 
 
-const eventSelected = events.find(event => event._id == id);
-const $base = document.getElementById('baseCard');
-
-
-let detail = "";
-function pastOrUpcoming() {
-    if (Date.parse(curDate) < Date.parse(`${eventSelected.date}`)) {
-        detail = ` Estimate: ${eventSelected.estimate}`;
-    } else {
-        detail = ` Assistance: ${eventSelected.assistance}`;
+async function getData() {
+    try {
+        const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
+        const data = await response.json();
+        finalData(data);
+    }
+    catch {
+        console.log('Error');
     }
 }
 
-pastOrUpcoming();
+getData();
 
-function generateTemplate(eventSelected) {
-    return `
+function finalData(data) {
+    const events = data.events;
+    const curDate = data.currentDate;
+    
+    const eventSelected = events.find(event => event._id == id);
+    const $base = document.getElementById('baseCard');
+
+
+    let detail = "";
+    function pastOrUpcoming() {
+        if (Date.parse(curDate) < Date.parse(`${eventSelected.date}`)) {
+            detail = ` Estimate: ${eventSelected.estimate}`;
+        } else {
+            detail = ` Assistance: ${eventSelected.assistance}`;
+        }
+    }
+
+    pastOrUpcoming();
+
+    function generateTemplate(eventSelected) {
+        return `
     <div class="col-md-4">
         <img src="${eventSelected.image}" class="img-fluid rounded-start h-100 object-fit-cover" alt="Card Image Element">
         <div id="containerBtn"><i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill"></i></div>
@@ -43,65 +60,65 @@ function generateTemplate(eventSelected) {
             
         </div>
     </div>`
-}
+    }
 
-function createCard(event, base) {
-    let templateCards = '';
-    templateCards = generateTemplate(event);
-    base.innerHTML = templateCards;
-}
+    function createCard(event, base) {
+        let templateCards = '';
+        templateCards = generateTemplate(event);
+        base.innerHTML = templateCards;
+    }
 
-createCard(eventSelected, $base);
-const $containerBtn = document.getElementById('containerBtn');
+    createCard(eventSelected, $base);
+    const $containerBtn = document.getElementById('containerBtn');
 
-let arrayFav = [];
+    let arrayFav = [];
 
-function clickBtn(event) {
-    const favoriteIcon = event.target.closest('.favorite');
-    favoriteIcon.classList.toggle('likeDetail');
-    const index = arrayFav.findIndex((event) => event._id === eventSelected._id);
-    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-    
-    if (favoriteIcon.classList.contains('likeDetail')) {
-        if (index === -1) {
-            arrayFav.push(eventSelected);
-            localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
-            $messageToast.innerHTML = 'Event added to Favorites';
-            toastBootstrap.show();
+    function clickBtn(event) {
+        const favoriteIcon = event.target.closest('.favorite');
+        favoriteIcon.classList.toggle('likeDetail');
+        const index = arrayFav.findIndex((event) => event._id === eventSelected._id);
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+
+        if (favoriteIcon.classList.contains('likeDetail')) {
+            if (index === -1) {
+                arrayFav.push(eventSelected);
+                localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
+                $messageToast.innerHTML = 'Event added to Favorites';
+                toastBootstrap.show();
+            }
+        } else {
+            if (index !== -1) {
+                arrayFav.splice(index, 1);
+                localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
+                $messageToast.innerHTML = 'Event removed from Favorites';
+                toastBootstrap.show();
+            }
         }
-    } else {
+    }
+
+    $containerBtn.addEventListener('click', clickBtn);
+
+    function checkFavorite() {
+        const storedArrayFav = localStorage.getItem('arrayFav');
+        if (storedArrayFav) {
+            arrayFav = JSON.parse(storedArrayFav);
+        }
+
+        const favoriteIcon = document.querySelector('.favorite');
+        const index = arrayFav.findIndex((event) => event._id === eventSelected._id);
+
         if (index !== -1) {
-            arrayFav.splice(index, 1);
-            localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
-            $messageToast.innerHTML = 'Event removed from Favorites';
-            toastBootstrap.show();
+            favoriteIcon.classList.add('likeDetail');
         }
     }
-}
 
-$containerBtn.addEventListener('click', clickBtn);
+    checkFavorite();
 
-function checkFavorite() {
-    const storedArrayFav = localStorage.getItem('arrayFav');
-    if (storedArrayFav) {
-        arrayFav = JSON.parse(storedArrayFav);
-    }
-    
-    const favoriteIcon = document.querySelector('.favorite');
-    const index = arrayFav.findIndex((event) => event._id === eventSelected._id);
-    
-    if (index !== -1) {
-        favoriteIcon.classList.add('likeDetail');
-    }
-}
+    const $baseFavorites = document.getElementById('baseFavorites');
+    const $btnBody = document.getElementById('btnBody');
 
-checkFavorite();
-
-const $baseFavorites = document.getElementById('baseFavorites');
-const $btnBody = document.getElementById('btnBody');
-
-function generateTemplateFav(favoriteEvents) {
-    return `
+    function generateTemplateFav(favoriteEvents) {
+        return `
     <a href="./details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
         <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -112,26 +129,27 @@ function generateTemplateFav(favoriteEvents) {
             <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>
         </div>
     </a>`
-}
-
-function createCardFav(event, base) {
-    let templateCardsFav = '';
-    if (event.length === 0) {
-        base.innerHTML = "You don't have any favorite events";
-        $btnBody.innerHTML = '';
-    } else {
-        event.forEach(event => {
-            templateCardsFav += generateTemplateFav(event);
-        })
-        base.innerHTML = templateCardsFav;
-        $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
     }
-}
 
-createCardFav(arrayFav, $baseFavorites);
+    function createCardFav(event, base) {
+        let templateCardsFav = '';
+        if (event.length === 0) {
+            base.innerHTML = "You don't have any favorite events";
+            $btnBody.innerHTML = '';
+        } else {
+            event.forEach(event => {
+                templateCardsFav += generateTemplateFav(event);
+            })
+            base.innerHTML = templateCardsFav;
+            $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
+        }
+    }
 
-function deleteFavorites() {
-    localStorage.clear('arrayFav');
-    arrayFav = [];
     createCardFav(arrayFav, $baseFavorites);
+
+    function deleteFavorites() {
+        localStorage.clear('arrayFav');
+        arrayFav = [];
+        createCardFav(arrayFav, $baseFavorites);
+    }
 }
