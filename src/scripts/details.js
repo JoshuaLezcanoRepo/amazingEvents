@@ -1,11 +1,8 @@
 const queryString = location.search;
 const params = new URLSearchParams(queryString);
-// const events = data.events;
-// const curDate = data.currentDate;
 const id = params.get('id');
 const toastLiveExample = document.getElementById('liveToast');
 const $messageToast = document.getElementById('messageToast');
-
 
 async function getData() {
     try {

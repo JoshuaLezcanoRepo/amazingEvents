@@ -216,5 +216,4 @@ function finalData(data) {
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
     }
-
 }

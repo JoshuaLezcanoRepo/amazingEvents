@@ -14,9 +14,7 @@ const $btnBody = document.getElementById('btnBody');
 async function getData() {
     try {
         const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
-        console.log(response)
         const data = await response.json();
-        console.log(data)
         finalData(data);
     }
     catch {
@@ -27,7 +25,6 @@ async function getData() {
 getData();
 
 const finalData = (data)  => {
-    console.log(data)
     const events = data.events;
     const curDate = data.currentDate;
 
