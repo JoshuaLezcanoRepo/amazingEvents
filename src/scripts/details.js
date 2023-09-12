@@ -9,9 +9,8 @@ async function getData() {
         const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
         const data = await response.json();
         finalData(data);
-    }
-    catch {
-        console.log('Error');
+    } catch (error) {
+        console.log('Error:', error);
     }
 }
 
@@ -24,50 +23,43 @@ function finalData(data) {
     const eventSelected = events.find(event => event._id == id);
     const $base = document.getElementById('baseCard');
 
-
     let detail = "";
+
     function pastOrUpcoming() {
-        if (Date.parse(curDate) < Date.parse(`${eventSelected.date}`)) {
-            detail = ` Estimate: ${eventSelected.estimate}`;
-        } else {
-            detail = ` Assistance: ${eventSelected.assistance}`;
-        }
+        detail = Date.parse(curDate) < Date.parse(`${eventSelected.date}`) ? ` Estimate: ${eventSelected.estimate}` : ` Assistance: ${eventSelected.assistance}`;
     }
 
     pastOrUpcoming();
 
     function generateTemplate(eventSelected) {
         return `
-    <div class="col-md-4">
-        <img src="${eventSelected.image}" class="img-fluid rounded-start h-100 object-fit-cover" alt="Card Image Element">
-        <div id="containerBtn"><i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill"></i></div>
-    </div>
-    <div class="col-md-8">
-        <div class="card-body lh-sm">
-            <div class="d-flex gap-3 align-items-center">
-                <h5 class="card-title h2 fw-bold">${eventSelected.name}</h5>
-                <p class="card-text text-warning-emphasis">${eventSelected.category}</p>
-            </div>
-            <p class="card-text opacity-50">${eventSelected.description}</p>
-            <p class="card-text"><i class="bi bi-calendar-event text-primary-emphasis"></i> Date: ${eventSelected.date}</p>
-            <p class="card-text"><i class="bi bi-building text-primary-emphasis"></i> City: ${eventSelected.place}</p>
-            <p class="card-text"><i class="bi bi-people text-primary-emphasis"></i> Capacity: ${eventSelected.capacity}</p>
-            <p class="card-text"><i class="bi bi-currency-dollar text-primary-emphasis"></i> Event Price: ${eventSelected.price} USD</p>
-            <p class="card-text"><i class="bi bi-pass text-primary-emphasis"></i>${detail}</p>
-            
+        <div class="col-md-4">
+            <img src="${eventSelected.image}" class="img-fluid rounded-start h-100 object-fit-cover" alt="Card Image Element">
+            <div id="containerBtn"><i class="favorite btn position-absolute top-0 end-0 bi bi-heart-fill"></i></div>
         </div>
-    </div>`
+        <div class="col-md-8">
+            <div class="card-body lh-sm">
+                <div class="d-flex gap-3 align-items-center">
+                    <h5 class="card-title h2 fw-bold">${eventSelected.name}</h5>
+                    <p class="card-text text-warning-emphasis">${eventSelected.category}</p>
+                </div>
+                <p class="card-text opacity-50">${eventSelected.description}</p>
+                <p class="card-text"><i class="bi bi-calendar-event text-primary-emphasis"></i> Date: ${eventSelected.date}</p>
+                <p class="card-text"><i class="bi bi-building text-primary-emphasis"></i> City: ${eventSelected.place}</p>
+                <p class="card-text"><i class="bi bi-people text-primary-emphasis"></i> Capacity: ${eventSelected.capacity}</p>
+                <p class="card-text"><i class="bi bi-currency-dollar text-primary-emphasis"></i> Event Price: ${eventSelected.price} USD</p>
+                <p class="card-text"><i class="bi bi-pass text-primary-emphasis"></i>${detail}</p>
+            </div>
+        </div>`;
     }
 
     function createCard(event, base) {
-        let templateCards = '';
-        templateCards = generateTemplate(event);
+        const templateCards = generateTemplate(event);
         base.innerHTML = templateCards;
     }
 
     createCard(eventSelected, $base);
     const $containerBtn = document.getElementById('containerBtn');
-
     let arrayFav = [];
 
     function clickBtn(event) {
@@ -116,16 +108,16 @@ function finalData(data) {
 
     function generateTemplateFav(favoriteEvents) {
         return `
-    <a href="./details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-        <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
-        <div class="d-flex gap-2 w-100 justify-content-between">
-            <div>
-                <h6 class="mb-0">${favoriteEvents.name}</h6>
-                <p class="pt-3 mb-0 opacity-75">${favoriteEvents.description}</p>
+        <a href="./details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+            <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+            <div class="d-flex gap-2 w-100 justify-content-between">
+                <div>
+                    <h6 class="mb-0">${favoriteEvents.name}</h6>
+                    <p class="pt-3 mb-0 opacity-75">${favoriteEvents.description}</p>
+                </div>
+                <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>
             </div>
-            <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>
-        </div>
-    </a>`
+        </a>`;
     }
 
     function createCardFav(event, base) {
@@ -149,4 +141,28 @@ function finalData(data) {
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
     }
+
+    const categoryEvents = events.filter(event => event.category === eventSelected.category && event._id !== eventSelected._id);
+    const randomEvents = categoryEvents.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const $customCards = document.getElementById('customCards');
+
+    randomEvents.forEach(event => {
+        let template = "";
+        template += `<div class="col">
+        <a class="nav-link" href="../pages/details.html?id=${event._id}">
+            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg object-fit-cover" style="background-image: url('${event.image}');">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-9 lh-1 fw-bold">${event.name}</h3>
+                    <ul class="d-flex list-unstyled mt-auto">
+                        <li class="d-flex align-items-center me-3">
+                            <small>${event.category}</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </a>
+    </div>
+    `;
+        $customCards.innerHTML += template;
+    });
 }

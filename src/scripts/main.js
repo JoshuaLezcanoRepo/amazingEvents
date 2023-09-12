@@ -16,15 +16,14 @@ async function getData() {
         const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
         const data = await response.json();
         finalData(data);
-    }
-    catch {
-        console.log('Error');
+    } catch (error) {
+        console.log('Error:', error);
     }
 }
 
 getData();
 
-const finalData = (data)  => {
+const finalData = (data) => {
     const events = data.events;
     const curDate = data.currentDate;
 
@@ -69,12 +68,24 @@ const finalData = (data)  => {
     $baseTotalEventos.innerHTML = `Total Events: ${contadorCards}`;
     const contadorTotalEventos = `Total Events: ${contadorCards}`;
 
-    // Función para marcar eventos favoritos
     function addFavoriteButtonListeners() {
         const favButtons = document.querySelectorAll('.favorite');
         favButtons.forEach(function (button) {
             button.addEventListener('click', function () {
                 this.classList.toggle('like');
+                const eventId = this.closest('.card').querySelector('.card-title').textContent;
+                const event = events.find(event => event.name === eventId);
+                if (this.classList.contains('like')) {
+                    arrayFav.push(event);
+                    console.log(arrayFav);
+                } else {
+                    const index = arrayFav.findIndex(favEvent => favEvent.name === event.name);
+                    if (index !== -1) {
+                        arrayFav.splice(index, 1);
+                        console.log(arrayFav);
+                    }
+                }
+                localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
             });
         });
     }
@@ -83,7 +94,6 @@ const finalData = (data)  => {
 
     // Filtrado de Categorias
     const allCategories = [...new Set(events.map(event => event.category))];
-
 
     // Función para crear el template de las categorias
     function generateTemplateCat(event) {
@@ -197,11 +207,6 @@ const finalData = (data)  => {
     }
 
     function createCardFav(event, base) {
-        function deleteFavorites() {
-            localStorage.clear('arrayFav');
-            arrayFav = [];
-            createCardFav(arrayFav, $baseFavorites);
-        }
         let templateCardsFav = '';
         if (event.length === 0) {
             base.innerHTML = "You don't have any favorite events";
@@ -214,7 +219,12 @@ const finalData = (data)  => {
             $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onclick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
         }
     }
-    
+
     createCardFav(arrayFav, $baseFavorites);
-    
+
+    function deleteFavorites() {
+        localStorage.clear('arrayFav');
+        arrayFav = [];
+        createCardFav(arrayFav, $baseFavorites);
+    }
 }

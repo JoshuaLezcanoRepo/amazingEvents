@@ -11,9 +11,8 @@ async function getData() {
         const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
         const data = await response.json();
         finalData(data);
-    }
-    catch {
-        console.log('Error');
+    } catch (error) {
+        console.log('Error:', error);
     }
 }
 
@@ -41,27 +40,20 @@ function finalData(data) {
                 </div>
             </div>
         </div>
-    </div>`
+    </div>`;
     }
 
     // Función para filtrar cada evento por la fecha y añadirlo a un array vacio
     function filterUpcomingEvents(events, curDate) {
-        const upcomingEvents = [];
-        for (let event of events) {
-            if (Date.parse(curDate) < Date.parse(`${event.date}`)) {
-                upcomingEvents.push(event);
-            }
-        }
-        return upcomingEvents;
+        return events.filter(event => Date.parse(curDate) < Date.parse(event.date));
     }
 
     // Función para crear las cards, con parametro (array con los eventos filtrados y la base donde se colocaran las cards)
     function createCards(upcomingEvents, baseUpcoming) {
-        let templateCardsUpcoming = "";
-        upcomingEvents.forEach(event => {
-            templateCardsUpcoming += generateTemplate(event);
+        let templateCardsUpcoming = upcomingEvents.map(event => {
             contadorCards++;
-        })
+            return generateTemplate(event);
+        }).join('');
         baseUpcoming.innerHTML = templateCardsUpcoming;
     }
 
@@ -72,7 +64,7 @@ function finalData(data) {
 
     // Función para marcar eventos favoritos
     const favButtons = document.querySelectorAll('.favorite');
-    favButtons.forEach(function (button) {
+    favButtons.forEach(button => {
         button.addEventListener('click', function () {
             this.classList.toggle('like');
         });
@@ -87,15 +79,12 @@ function finalData(data) {
     <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" id="${event}" value="${event}">
         <label class="form-check-label" for="${event}">${event}</label>
-    </div>`
+    </div>`;
     }
 
     // Función para crear categorias filtradas
     function createCats(events, base) {
-        let templateCats = "";
-        events.forEach(nameCat => {
-            templateCats += generateTemplateCat(nameCat);
-        });
+        let templateCats = events.map(nameCat => generateTemplateCat(nameCat)).join('');
         base.innerHTML = templateCats;
     }
 
@@ -106,15 +95,9 @@ function finalData(data) {
         let array = Array.from(document.querySelectorAll("input[type='checkbox']:checked")).map(check => check.value);
         let eventsFiltered;
         if (array.length === 0) {
-            eventsFiltered = createUpcomingEvents.filter(event => {
-                const eventName = event.name.toLowerCase();
-                return eventName.includes(searchValue);
-            });
+            eventsFiltered = createUpcomingEvents.filter(event => event.name.toLowerCase().includes(searchValue));
         } else {
-            eventsFiltered = createUpcomingEvents.filter(event => {
-                const eventName = event.name.toLowerCase();
-                return eventName.includes(searchValue) && array.includes(event.category);
-            });
+            eventsFiltered = createUpcomingEvents.filter(event => event.name.toLowerCase().includes(searchValue) && array.includes(event.category));
         }
 
         if (eventsFiltered.length === 0) {
@@ -192,7 +175,7 @@ function finalData(data) {
             </div>
             <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>
         </div>
-    </a>`
+    </a>`;
     }
 
     function createCardFav(event, base) {
@@ -201,9 +184,7 @@ function finalData(data) {
             base.innerHTML = "You don't have any favorite events";
             $btnBody.innerHTML = '';
         } else {
-            event.forEach(event => {
-                templateCardsFav += generateTemplateFav(event);
-            })
+            templateCardsFav = event.map(event => generateTemplateFav(event)).join('');
             base.innerHTML = templateCardsFav;
             $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
         }

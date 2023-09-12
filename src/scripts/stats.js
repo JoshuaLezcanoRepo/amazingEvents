@@ -1,158 +1,112 @@
 const $tdEventStatisticsBase = document.getElementById('eventStatistics');
-const $tdPastStatisticsBase = document.getElementById('pastStatistics');
+const $pastEventsBody = document.getElementById('pastEventsBody');
+const $upcomingEventsBody = document.getElementById('upcomingEventsBody');
 
 async function getData() {
     try {
         const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
         const data = await response.json();
         finalData(data);
-    }
-    catch {
-        console.log('Error');
+    } catch (error) {
+        console.log('Error:', error);
     }
 }
 
 getData();
 
 function finalData(data) {
-    const events = data.events;
-    const curDate = data.currentDate;
+    const { events, currentDate } = data;
 
-    // Obtengo Eventos Futuros y Pasados
-    function filterUpcomingEvents(events, curDate) {
-        const upcomingEvents = [];
-        for (let event of events) {
-            if (Date.parse(curDate) < Date.parse(`${event.date}`)) {
-                upcomingEvents.push(event);
-            }
-        }
-        return upcomingEvents;
-    }
+    const filterUpcomingEvents = (events, curDate) =>
+        events.filter(event => Date.parse(event.date) > Date.parse(curDate));
 
-    const createUpcomingEvents = filterUpcomingEvents(events, curDate);
-    // console.log(createUpcomingEvents);
+    const createUpcomingEvents = filterUpcomingEvents(events, currentDate);
 
-    function filterPastEvents(events, curDate) {
-        const pastEvents = [];
-        for (let event of events) {
-            if (Date.parse(curDate) > Date.parse(`${event.date}`)) {
-                pastEvents.push(event);
-            }
-        }
-        return pastEvents;
-    }
+    const filterPastEvents = (events, curDate) =>
+        events.filter(event => Date.parse(event.date) < Date.parse(curDate));
 
-    const createPastEvents = filterPastEvents(events, curDate);
-    // console.log(createPastEvents);
+    const createPastEvents = filterPastEvents(events, currentDate);
 
-    // Filtro por Categorías (Upcoming & Past)
     const allCategoriesUpcoming = [...new Set(createUpcomingEvents.map(event => event.category))];
-    console.log(allCategoriesUpcoming);
-
     const allCategoriesPast = [...new Set(createPastEvents.map(event => event.category))];
-    console.log(allCategoriesPast);
 
-    function highestAssistance(events) {
-        let contador = 0;
-        let eventTitle = "";
-        events.forEach((event) => {
-            let number = ((event.assistance / event.capacity) * 100);
-
-            if (number > contador) {
-                contador = number;
-                eventTitle = event.name;
+    const highestAssistance = events =>
+        events.reduce((acc, event) => {
+            const number = (event.assistance / event.capacity) * 100;
+            if (number > acc.contador) {
+                return { contador: number, eventTitle: event.name };
             }
-        })
-        return `${eventTitle} ${contador.toFixed(2)}%`;
-    }
+            return acc;
+        }, { contador: 0, eventTitle: "" });
 
-    // console.log(highestAssistance(events));
-
-    function lowestAssistance(events) {
-        let contador = 100;
-        let eventTitle = "";
-        events.forEach((event) => {
-            let number = ((event.assistance / event.capacity) * 100);
-
-            if (number < contador) {
-                contador = number;
-                eventTitle = event.name;
+    const lowestAssistance = events =>
+        events.reduce((acc, event) => {
+            const number = (event.assistance / event.capacity) * 100;
+            if (number < acc.contador) {
+                return { contador: number, eventTitle: event.name };
             }
-        })
-        return `${eventTitle} ${contador.toFixed(2)}%`;
-    }
+            return acc;
+        }, { contador: 100, eventTitle: "" });
 
-    // console.log(lowestAssistance(events));
-    
-    function largerCapacity(events) {
-        let contador = 0;
-        let eventTitle = "";
-        events.forEach((event) => {
-            if (event.capacity > contador) {
-                contador = event.capacity;
-                eventTitle = event.name;
+    const largerCapacity = events =>
+        events.reduce((acc, event) => {
+            if (event.capacity > acc.contador) {
+                return { contador: event.capacity, eventTitle: event.name };
             }
-        })
-        return `${eventTitle} ${contador.toLocaleString(undefined, {
-            maximumFractionDigits: 0})}`;
-    }
+            return acc;
+        }, { contador: 0, eventTitle: "" });
 
-    // console.log(largerCapacity(events));
+    $tdEventStatisticsBase.innerHTML = `
+    <td>${highestAssistance(createPastEvents).eventTitle} ${highestAssistance(createPastEvents).contador.toFixed(2)}%</td>
+    <td>${lowestAssistance(createPastEvents).eventTitle} ${lowestAssistance(createPastEvents).contador.toFixed(2)}%</td>
+    <td>${largerCapacity(events).eventTitle} ${largerCapacity(events).contador.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>`;
 
-    $tdEventStatisticsBase.innerHTML = `<td>${highestAssistance(createPastEvents)}</td><td>${lowestAssistance(createPastEvents)}</td><td>${largerCapacity(events)}</td>`
+    const dataEvents = (categories, events) =>
+        categories.map(category => {
+            const eventsCats = events.filter(event => event.category === category);
+            const eventsRevenues = eventsCats.reduce((accumulator, event) => accumulator + event.price * (event.estimate || event.assistance), 0);
+            const attendance = eventsCats.reduce((accumulator, event) => accumulator + ((event.assistance || event.estimate) / event.capacity) * 100, 0) / eventsCats.length;
 
-
-    // Filter Past Events - Category - Revenue
-    function dataPastEvents(categories, events) {
-        let dataFinal = [];
-        categories.forEach((category) => {
-            let eventsCats = events.filter((event) => category == event.category);
-            let eventsRevenues = eventsCats.reduce((contador, event) => contador + event.price * (event.estimate || event.assistance), 0);
-            let attendance = eventsCats.reduce((contador, event) => contador + ((event.assistance || event.estimate) / event.capacity) * 100, 0);
-            dataFinal.push({
+            return {
                 category,
                 eventsRevenues,
-                attendance: attendance / eventsCats.length,
-            });
+                attendance,
+            };
         });
-        return dataFinal;
-    }
 
-    const dataShowPastEvent = dataPastEvents(allCategoriesPast, createPastEvents);
-    const dataShowUpcomingEvent = dataPastEvents(allCategoriesUpcoming, createUpcomingEvents);
+    const dataShowPastEvent = dataEvents(allCategoriesPast, createPastEvents);
+    const dataShowUpcomingEvent = dataEvents(allCategoriesUpcoming, createUpcomingEvents);
 
-    // Función para crear el template de las cards
-    function generateTemplate(event) {
-        return `
-            <tr>${event.category}</tr>`
-    }
+    const generateTemplate = event => `
+    <tr>
+        <td>${event.category}</td>
+        <td>$ ${event.eventsRevenues.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+        <td>${event.attendance.toFixed(2)}%</td>
+    </tr>`;
 
-    // Función para crear las cards, con parametro (array con los eventos filtrados y la base donde se colocaran las cards)
-    function createCards(dataShowPastEvent, baseUpcoming) {
-        let templateCardsUpcoming = "";
-        dataShowPastEvent.forEach(event => {
-            templateCardsUpcoming += generateTemplate(event);
-        })
+    const createCards = (dataEvent, baseUpcoming) => {
+        const templateCardsUpcoming = dataEvent.map(event => generateTemplate(event)).join('');
         baseUpcoming.innerHTML = templateCardsUpcoming;
-    }
+    };
 
-    createCards(dataShowPastEvent, $tdPastStatisticsBase);
+    createCards(dataShowPastEvent, $pastEventsBody);
+    createCards(dataShowUpcomingEvent, $upcomingEventsBody);
 
     let arrayFav = [];
-    function checkFavorite() {
+
+    const checkFavorite = () => {
         const storedArrayFav = localStorage.getItem('arrayFav');
         if (storedArrayFav) {
             arrayFav = JSON.parse(storedArrayFav);
         }
-    }
+    };
 
     checkFavorite();
 
     const $baseFavorites = document.getElementById('baseFavorites');
     const $btnBody = document.getElementById('btnBody');
 
-    function generateTemplateFav(favoriteEvents) {
-        return `
+    const generateTemplateFav = favoriteEvents => `
     <a href="../pages/details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
         <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
         <div class="d-flex gap-2 w-100 justify-content-between">
@@ -162,28 +116,24 @@ function finalData(data) {
             </div>
             <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>
         </div>
-    </a>`
-    }
+    </a>`;
 
-    function createCardFav(event, base) {
-        let templateCardsFav = '';
+    const createCardFav = (event, base) => {
         if (event.length === 0) {
             base.innerHTML = "You don't have any favorite events";
             $btnBody.innerHTML = '';
         } else {
-            event.forEach(event => {
-                templateCardsFav += generateTemplateFav(event);
-            })
+            const templateCardsFav = event.map(event => generateTemplateFav(event)).join('');
             base.innerHTML = templateCardsFav;
             $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
         }
-    }
+    };
 
     createCardFav(arrayFav, $baseFavorites);
 
-    function deleteFavorites() {
+    const deleteFavorites = () => {
         localStorage.clear('arrayFav');
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
-    }
+    };
 }

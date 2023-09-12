@@ -11,9 +11,8 @@ async function getData() {
         const response = await fetch('https://mindhub-xj03.onrender.com/api/amazing');
         const data = await response.json();
         finalData(data);
-    }
-    catch {
-        console.log('Error');
+    } catch (error) {
+        console.log('Error:', error);
     }
 }
 
@@ -23,7 +22,6 @@ function finalData(data) {
     const events = data.events;
     const curDate = data.currentDate;
 
-    // Función para crear el template de las cards
     function generateTemplate(event) {
         return `
     <div class="col">
@@ -41,10 +39,9 @@ function finalData(data) {
                 </div>
             </div>
         </div>
-    </div>`
+    </div>`;
     }
 
-    // Función para filtrar cada evento por la fecha y añadirlo a un array vacio
     function filterPastEvents(events, curDate) {
         const pastEvents = [];
         for (let event of events) {
@@ -55,7 +52,6 @@ function finalData(data) {
         return pastEvents;
     }
 
-    // Función para crear las cards, con parametro (array con los eventos filtrados y la base donde se colocaran las cards)
     function createCards(pastEvents, basePast) {
         let templateCardsPast = "";
         pastEvents.forEach(event => {
@@ -70,7 +66,6 @@ function finalData(data) {
     $baseTotalEventos.innerHTML = `Total Past Events: ${contadorCards}`;
     const contadorTotalEventos = `Total Upcoming Events: ${contadorCards}`;
 
-    // Función para marcar eventos favoritos
     const favButtons = document.querySelectorAll('.favorite');
     favButtons.forEach(function (button) {
         button.addEventListener('click', function () {
@@ -78,19 +73,16 @@ function finalData(data) {
         });
     });
 
-    // Filtrado de Categorias
     const allCategoriesPast = [...new Set(createPastEvents.map(event => event.category))];
 
-    // Función para crear el template de las categorias
     function generateTemplateCat(event) {
         return `
     <div class="form-check form-check-inline">
         <input class="form-check-input" type="checkbox" id="${event}" value="${event}">
         <label class="form-check-label" for="${event}">${event}</label>
-    </div>`
+    </div>`;
     }
 
-    // Función para crear categorias filtradas
     function createCats(events, base) {
         let templateCats = "";
         events.forEach(nameCat => {
@@ -131,23 +123,24 @@ function finalData(data) {
     $inputSearch.addEventListener('input', filterResults);
     $catContainer.addEventListener('change', filterResults);
 
-    // Funcion para prevenir el "refresh"
     function preventRefresh(event) {
         event.preventDefault();
     }
 
-    // Evento que escucha el "click" del botón search
-    $inputSearchButton.addEventListener('click', preventRefresh);
+    function handleSearchButtonClick() {
+        preventRefresh(event);
+    }
 
-    // Evento para escuchar el "Enter"
+    $inputSearchButton.addEventListener('click', handleSearchButtonClick);
+
     $inputSearch.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             preventRefresh(event);
         }
     });
 
-    /* IMAGENES */
     const allImages = [...new Set(createPastEvents.map(event => event.image))];
+
     function getRandomImages() {
         let randomImages = [];
         let backupImages = allImages.slice();
@@ -169,6 +162,7 @@ function finalData(data) {
     refreshCarousel();
 
     let arrayFav = [];
+
     function checkFavorite() {
         const storedArrayFav = localStorage.getItem('arrayFav');
         if (storedArrayFav) {
@@ -192,7 +186,7 @@ function finalData(data) {
             </div>
             <small class="opacity-50 text-nowrap">${favoriteEvents.date}</small>
         </div>
-    </a>`
+    </a>`;
     }
 
     function createCardFav(event, base) {
@@ -203,7 +197,7 @@ function finalData(data) {
         } else {
             event.forEach(event => {
                 templateCardsFav += generateTemplateFav(event);
-            })
+            });
             base.innerHTML = templateCardsFav;
             $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
         }
