@@ -31,30 +31,31 @@ function finalData(data) {
     const allCategoriesPast = [...new Set(createPastEvents.map(event => event.category))];
 
     const highestAssistance = events =>
-        events.reduce((acc, event) => {
-            const number = (event.assistance / event.capacity) * 100;
+        events.reduce((acc, { assistance, capacity, name }) => {
+            const number = (assistance / capacity) * 100;
             if (number > acc.contador) {
-                return { contador: number, eventTitle: event.name };
+                return { contador: number, eventTitle: name };
             }
             return acc;
         }, { contador: 0, eventTitle: "" });
 
     const lowestAssistance = events =>
-        events.reduce((acc, event) => {
-            const number = (event.assistance / event.capacity) * 100;
+        events.reduce((acc, { assistance, capacity, name }) => {
+            const number = (assistance / capacity) * 100;
             if (number < acc.contador) {
-                return { contador: number, eventTitle: event.name };
+                return { contador: number, eventTitle: name };
             }
             return acc;
         }, { contador: 100, eventTitle: "" });
 
     const largerCapacity = events =>
-        events.reduce((acc, event) => {
-            if (event.capacity > acc.contador) {
-                return { contador: event.capacity, eventTitle: event.name };
+        events.reduce((acc, { capacity, name }) => {
+            if (capacity > acc.contador) {
+                return { contador: capacity, eventTitle: name };
             }
             return acc;
         }, { contador: 0, eventTitle: "" });
+
 
     $tdEventStatisticsBase.innerHTML = `
     <td>${highestAssistance(createPastEvents).eventTitle} ${highestAssistance(createPastEvents).contador.toFixed(2)}%</td>
@@ -104,7 +105,6 @@ function finalData(data) {
     checkFavorite();
 
     const $baseFavorites = document.getElementById('baseFavorites');
-    const $btnBody = document.getElementById('btnBody');
 
     const generateTemplateFav = favoriteEvents => `
     <a href="../pages/details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
@@ -118,22 +118,28 @@ function finalData(data) {
         </div>
     </a>`;
 
-    const createCardFav = (event, base) => {
+    let button = document.getElementById("btnBody");
+    function createCardFav(event, base) {
+        let templateCardsFav = '';
         if (event.length === 0) {
             base.innerHTML = "You don't have any favorite events";
-            $btnBody.innerHTML = '';
+            button.style.display = "none";
         } else {
-            const templateCardsFav = event.map(event => generateTemplateFav(event)).join('');
+            event.forEach(event => {
+                templateCardsFav += generateTemplateFav(event);
+            })
             base.innerHTML = templateCardsFav;
-            $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
+            button.style.display = "block";
         }
-    };
+    }
 
     createCardFav(arrayFav, $baseFavorites);
 
-    const deleteFavorites = () => {
+    function clickBtn() {
         localStorage.clear('arrayFav');
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
-    };
+    }
+
+    button.addEventListener('click', clickBtn);
 }

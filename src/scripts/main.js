@@ -70,6 +70,7 @@ const finalData = (data) => {
 
     function addFavoriteButtonListeners() {
         const favButtons = document.querySelectorAll('.favorite');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
         favButtons.forEach(function (button) {
             button.addEventListener('click', function () {
                 this.classList.toggle('like');
@@ -77,12 +78,14 @@ const finalData = (data) => {
                 const event = events.find(event => event.name === eventId);
                 if (this.classList.contains('like')) {
                     arrayFav.push(event);
-                    console.log(arrayFav);
+                    $messageToast.innerHTML = 'Event added to Favorites';
+                    toastBootstrap.show();
                 } else {
                     const index = arrayFav.findIndex(favEvent => favEvent.name === event.name);
                     if (index !== -1) {
                         arrayFav.splice(index, 1);
-                        console.log(arrayFav);
+                        $messageToast.innerHTML = 'Event removed from Favorites';
+                        toastBootstrap.show();
                     }
                 }
                 localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
@@ -206,25 +209,28 @@ const finalData = (data) => {
     </a>`
     }
 
+    let button = document.getElementById("btnBody");
     function createCardFav(event, base) {
         let templateCardsFav = '';
         if (event.length === 0) {
             base.innerHTML = "You don't have any favorite events";
-            $btnBody.innerHTML = '';
+            button.style.display = "none";
         } else {
             event.forEach(event => {
                 templateCardsFav += generateTemplateFav(event);
             })
             base.innerHTML = templateCardsFav;
-            $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onclick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
+            button.style.display = "block";
         }
     }
 
     createCardFav(arrayFav, $baseFavorites);
 
-    function deleteFavorites() {
+    function clickBtn() {
         localStorage.clear('arrayFav');
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
     }
+
+    button.addEventListener('click', clickBtn);
 }

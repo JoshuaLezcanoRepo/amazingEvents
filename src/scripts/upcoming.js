@@ -5,6 +5,8 @@ const $catContainer = document.getElementById('catContainer');
 const $inputSearch = document.getElementById('inputSearch');
 const $inputSearchButton = document.getElementById('inputSearchButton');
 const $result = document.getElementById('result');
+const toastLiveExample = document.getElementById('liveToast');
+const $messageToast = document.getElementById('messageToast');
 
 async function getData() {
     try {
@@ -62,13 +64,32 @@ function finalData(data) {
     $baseTotalEventos.innerHTML = `Total Upcoming Events: ${contadorCards}`;
     const contadorTotalEventos = `Total Upcoming Events: ${contadorCards}`;
 
-    // Función para marcar eventos favoritos
-    const favButtons = document.querySelectorAll('.favorite');
-    favButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            this.classList.toggle('like');
+    function addFavoriteButtonListeners() {
+        const favButtons = document.querySelectorAll('.favorite');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        favButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                this.classList.toggle('like');
+                const eventId = this.closest('.card').querySelector('.card-title').textContent;
+                const event = events.find(event => event.name === eventId);
+                if (this.classList.contains('like')) {
+                    arrayFav.push(event);
+                    $messageToast.innerHTML = 'Event added to Favorites';
+                    toastBootstrap.show();
+                } else {
+                    const index = arrayFav.findIndex(favEvent => favEvent.name === event.name);
+                    if (index !== -1) {
+                        arrayFav.splice(index, 1);
+                        $messageToast.innerHTML = 'Event removed from Favorites';
+                        toastBootstrap.show();
+                    }
+                }
+                localStorage.setItem('arrayFav', JSON.stringify(arrayFav));
+            });
         });
-    });
+    }
+
+    addFavoriteButtonListeners();
 
     // Filtrado de Categorias
     const allCategoriesUpcoming = [...new Set(createUpcomingEvents.map(event => event.category))];
@@ -162,7 +183,6 @@ function finalData(data) {
     checkFavorite();
 
     const $baseFavorites = document.getElementById('baseFavorites');
-    const $btnBody = document.getElementById('btnBody');
 
     function generateTemplateFav(favoriteEvents) {
         return `
@@ -178,23 +198,28 @@ function finalData(data) {
     </a>`;
     }
 
+    let button = document.getElementById("btnBody");
     function createCardFav(event, base) {
         let templateCardsFav = '';
         if (event.length === 0) {
             base.innerHTML = "You don't have any favorite events";
-            $btnBody.innerHTML = '';
+            button.style.display = "none";
         } else {
-            templateCardsFav = event.map(event => generateTemplateFav(event)).join('');
+            event.forEach(event => {
+                templateCardsFav += generateTemplateFav(event);
+            })
             base.innerHTML = templateCardsFav;
-            $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
+            button.style.display = "block";
         }
     }
 
     createCardFav(arrayFav, $baseFavorites);
 
-    function deleteFavorites() {
+    function clickBtn() {
         localStorage.clear('arrayFav');
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
     }
+
+    button.addEventListener('click', clickBtn);
 }

@@ -104,12 +104,11 @@ function finalData(data) {
     checkFavorite();
 
     const $baseFavorites = document.getElementById('baseFavorites');
-    const $btnBody = document.getElementById('btnBody');
 
     function generateTemplateFav(favoriteEvents) {
         return `
         <a href="./details.html?id=${favoriteEvents._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-            <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+            <img src="${favoriteEvents.image}" alt="twbs" width="32" height="32" class="object-fit-cover rounded-circle flex-shrink-0">
             <div class="d-flex gap-2 w-100 justify-content-between">
                 <div>
                     <h6 class="mb-0">${favoriteEvents.name}</h6>
@@ -120,27 +119,30 @@ function finalData(data) {
         </a>`;
     }
 
+    let $button = document.getElementById("btnBody");
     function createCardFav(event, base) {
         let templateCardsFav = '';
         if (event.length === 0) {
             base.innerHTML = "You don't have any favorite events";
-            $btnBody.innerHTML = '';
+            $button.style.display = "none";
         } else {
             event.forEach(event => {
                 templateCardsFav += generateTemplateFav(event);
             })
             base.innerHTML = templateCardsFav;
-            $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
+            $button.style.display = "block";
         }
     }
 
     createCardFav(arrayFav, $baseFavorites);
 
-    function deleteFavorites() {
+    function clickBtn() {
         localStorage.clear('arrayFav');
         arrayFav = [];
         createCardFav(arrayFav, $baseFavorites);
     }
+
+    $button.addEventListener('click', clickBtnFav);
 
     const categoryEvents = events.filter(event => event.category === eventSelected.category && event._id !== eventSelected._id);
     const randomEvents = categoryEvents.sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -148,10 +150,11 @@ function finalData(data) {
 
     randomEvents.forEach(event => {
         let template = "";
-        template += `<div class="col">
+        template += `<div class="col h-100">
         <a class="nav-link" href="../pages/details.html?id=${event._id}">
-            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg object-fit-cover" style="background-image: url('${event.image}');">
-                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+            <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg position-relative">
+                <img src="${event.image}" alt="${event.name}" class="position-absolute top-0 start-0 w-100 h-100 carousel-image">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1 position-relative">
                     <h3 class="pt-5 mt-5 mb-4 display-9 lh-1 fw-bold">${event.name}</h3>
                     <ul class="d-flex list-unstyled mt-auto">
                         <li class="d-flex align-items-center me-3">
@@ -161,8 +164,7 @@ function finalData(data) {
                 </div>
             </div>
         </a>
-    </div>
-    `;
+    </div>`;
         $customCards.innerHTML += template;
     });
 }

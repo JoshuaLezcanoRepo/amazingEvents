@@ -121,7 +121,20 @@
                 <div class="list-group" id="baseFavorites">
                 </div>
             </div>
-            <div id="btnBody" class="d-grid">
+            <div class="d-grid">
+                <button id="btnBody" type="button" class="btn btn-danger rounded-0"><i class="bi bi-trash"></i> Remove all Favorite Events</button>
+            </div>
+        </div>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header text-black">
+                    <img src="../images/amazing_brand.png" class="rounded me-2" alt="Logo Amazing Events" width="100">
+                    <strong class="me-auto">Favorites</strong>
+                    <small>Right Now</small>
+                    <button type="button" class="btn-close text-bg-light" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body text-black" id="messageToast">
+                </div>
             </div>
         </div>
     </main>

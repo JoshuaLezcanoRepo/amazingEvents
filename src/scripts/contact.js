@@ -1,6 +1,5 @@
 let arrayFav = [];
 const $baseFavorites = document.getElementById('baseFavorites');
-const $btnBody = document.getElementById('btnBody');
 
 function checkFavorite() {
     const storedArrayFav = localStorage.getItem('arrayFav');
@@ -12,7 +11,7 @@ function checkFavorite() {
 function generateTemplateFav(favoriteEvent) {
     return `
     <a href="../pages/details.html?id=${favoriteEvent._id}" class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
-        <img src="${favoriteEvent.image}" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">
+        <img src="${favoriteEvent.image}" alt="twbs" width="32" height="32" class="object-fit-cover rounded-circle flex-shrink-0">
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
                 <h6 class="mb-0">${favoriteEvent.name}</h6>
@@ -23,26 +22,29 @@ function generateTemplateFav(favoriteEvent) {
     </a>`;
 }
 
-function createCardFav(events, base) {
+checkFavorite();
+
+let button = document.getElementById("btnBody");
+function createCardFav(event, base) {
     let templateCardsFav = '';
-    if (events.length === 0) {
+    if (event.length === 0) {
         base.innerHTML = "You don't have any favorite events";
-        $btnBody.innerHTML = '';
+        button.style.display = "none";
     } else {
-        events.forEach(event => {
+        event.forEach(event => {
             templateCardsFav += generateTemplateFav(event);
-        });
+        })
         base.innerHTML = templateCardsFav;
-        $btnBody.innerHTML = '<button type="button" class="btn btn-danger rounded-0" onClick="deleteFavorites()"><i class="bi bi-trash"></i> Remove all Favorite Events</button>';
+        button.style.display = "block";
     }
 }
 
-function deleteFavorites() {
+createCardFav(arrayFav, $baseFavorites);
+
+function clickBtn() {
     localStorage.clear('arrayFav');
     arrayFav = [];
     createCardFav(arrayFav, $baseFavorites);
 }
 
-// Call the functions
-checkFavorite();
-createCardFav(arrayFav, $baseFavorites);
+button.addEventListener('click', clickBtn);
